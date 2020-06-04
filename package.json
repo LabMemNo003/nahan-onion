@@ -1,4 +1,7 @@
 {
   "name": "nahan-onion",
-  "version": "0.0.0"
+  "version": "0.0.1",
+  "description": "Middleware framework based on async/await and onion model",
+  "main": "index.js",
+  "repository": "LabMemNo003/nahan-onion"
 }
