@@ -1,7 +1,15 @@
 {
   "name": "nahan-onion",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Middleware framework based on async/await and onion model",
   "main": "index.js",
-  "repository": "LabMemNo003/nahan-onion"
+  "scripts": {
+    "test": "nyc --reporter=html mocha"
+  },
+  "repository": "LabMemNo003/nahan-onion",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.2.0",
+    "nyc": "^15.1.0"
+  }
 }
