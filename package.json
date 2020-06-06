@@ -1,6 +1,6 @@
 {
   "name": "nahan-onion",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Middleware framework based on async/await and onion model",
   "main": "index.js",
   "scripts": {
