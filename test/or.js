@@ -34,7 +34,7 @@ describe('Or', () => {
                         async (ctx, next, ...args) => {
                             for (const a of args) await asyncArrayPush(arr, a);
                             await asyncArrayPush(ctx, 1);
-                            const ret = await next(false, -1); 
+                            const ret = await next(false, -1);
                             if (ret !== undefined) flag = true;
                             await asyncArrayPush(ctx, 4);
                             return [-1];
@@ -72,7 +72,7 @@ describe('Or', () => {
                         async (ctx, next, ...args) => {
                             for (const a of args) await asyncArrayPush(arr, a);
                             await asyncArrayPush(ctx, 0);
-                            const ret = await next(false, -1); 
+                            const ret = await next(false, -1);
                             if (ret !== undefined) flag = true;
                             await asyncArrayPush(ctx, 5);
                             return [7, 8];
@@ -176,8 +176,8 @@ describe('Or', () => {
             expect(arr).to.eql([0, 1, 2, 3, 4]);
             expect(ctx).to.eql([0, 1]);
             expect(flag).to.equal(false);
-        });     
-        
+        });
+
         it('or.cond()', async () => {
             const arr = [];
             const ctx = [];
@@ -196,7 +196,7 @@ describe('Or', () => {
                         async (ctx, next, ...args) => {
                             for (const a of args) await asyncArrayPush(arr, a);
                             await asyncArrayPush(ctx, 1);
-                            const ret = await next(false, -1); 
+                            const ret = await next(false, -1);
                             if (ret !== undefined) flag = true;
                             await asyncArrayPush(ctx, 4);
                             return [-1];
