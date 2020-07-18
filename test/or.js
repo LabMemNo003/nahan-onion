@@ -176,7 +176,54 @@ describe('Or', () => {
             expect(arr).to.eql([0, 1, 2, 3, 4]);
             expect(ctx).to.eql([0, 1]);
             expect(flag).to.equal(false);
-        });        
+        });     
+        
+        it('or.cond()', async () => {
+            const arr = [];
+            const ctx = [];
+            let flag = false;
+            const branch =
+                Branch(
+                    Or().cond(
+                        async (ctx, next, ...args) => {
+                            for (const a of args) await asyncArrayPush(arr, a);
+                            await asyncArrayPush(ctx, 0);
+                            const ret = await next(false, -1);
+                            if (ret !== undefined) flag = true;
+                            await asyncArrayPush(ctx, 5);
+                            return [-1];
+                        },
+                        async (ctx, next, ...args) => {
+                            for (const a of args) await asyncArrayPush(arr, a);
+                            await asyncArrayPush(ctx, 1);
+                            const ret = await next(false, -1); 
+                            if (ret !== undefined) flag = true;
+                            await asyncArrayPush(ctx, 4);
+                            return [-1];
+                        }
+                    ),
+                    async (ctx, next, ...args) => {
+                        flag = true; // Shouldn't reach here
+                    }
+                );
+            const rets = await branch(
+                ctx,
+                async (ctx, next, ...args) => {
+                    for (const a of args) await asyncArrayPush(arr, a);
+                    await asyncArrayPush(ctx, 2);
+                    const ret = await next(-1); // next = () => { };
+                    if (ret !== undefined) flag = true;
+                    await asyncArrayPush(arr, 2);
+                    await asyncArrayPush(ctx, 3);
+                    return [3, 4];
+                },
+                0, 1);
+            for (const r of rets) await asyncArrayPush(arr, r);
+            expect(arr).to.eql([0, 1, 0, 1, 0, 1, 2, 3, 4]);
+            expect(ctx).to.eql([0, 1, 2, 3, 4, 5]);
+            expect(flag).to.equal(false);
+        });
+
     });
 
 });
