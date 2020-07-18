@@ -10,6 +10,13 @@ Middleware framework based on async/await and onion model
 [coveralls-image]: https://coveralls.io/repos/github/LabMemNo003/nahan-onion/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/github/LabMemNo003/nahan-onion?branch=master
 
+# API
+
++ Pipeline(...middleware)
++ Branch(condition, middleware)
++ And(condition_1, condition_2)
++ Or(condition_1, condition_2)
+
 # Example
 
 ## Pipeline
