@@ -261,7 +261,7 @@ describe('And', () => {
             expect(arr).to.eql([0, 1, 2, 3, 4]);
             expect(ctx).to.eql([0, 1]);
             expect(flag).to.equal(false);
-        });       
+        });
 
         it('and.cond()', async () => {
             const arr = [];
@@ -308,7 +308,7 @@ describe('And', () => {
             expect(ctx).to.eql([0, 1, 2, 3, 4, 5]);
             expect(flag).to.equal(false);
         });
-        
+
     });
 
 });
