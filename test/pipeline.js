@@ -22,22 +22,24 @@ describe('Pipeline', () => {
 
     describe('Basic useage', () => {
 
-        it('Should work with empty middleware', async () => {
-            let arr, ctx, rets;
-
+        it('Should work with empty middleware (1)', async () => {
             await Pipeline()();
+        });
 
-            arr = [], ctx = [];
-            rets = await Pipeline()(
+        it('Should work with empty middleware (2)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline()(
                 ctx,
                 EndWare(arr, [0, 1], [2, 3], 0, 1),
             );
             for (const r of rets) await asyncArrayPush(arr, r);
             expect(arr).to.eql(_.range(4));
             expect(ctx).to.eql(_.range(2));
+        });
 
-            arr = [], ctx = [];
-            rets = await Pipeline()(
+        it('Should work with empty middleware (3)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline()(
                 ctx,
                 EndWare(arr, [2, 3], [4, 5], 0, 1),
                 0, 1
@@ -47,11 +49,9 @@ describe('Pipeline', () => {
             expect(ctx).to.eql(_.range(2));
         });
 
-        it('Should call middlewares sequentially', async () => {
-            let arr, ctx, rets;
-
-            arr = [], ctx = [];
-            rets = await Pipeline(
+        it('Should call middlewares sequentially (1)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
                 MidWare(arr, [2, 3], [12, 13], 0, 5),
                 MidWare(arr, [4, 5], [10, 11], 1, 4),
                 EndWare(arr, [6, 7], [8, 9], 2, 3),
@@ -63,9 +63,11 @@ describe('Pipeline', () => {
             for (const r of rets) await asyncArrayPush(arr, r);
             expect(arr).to.eql(_.range(14));
             expect(ctx).to.eql(_.range(6));
+        });
 
-            arr = [], ctx = [];
-            rets = await Pipeline(
+        it('Should call middlewares sequentially (2)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
                 MidWare(arr, [2, 3], [12, 13], 0, 5),
                 MidWare(arr, [4, 5], [10, 11], 1, 4),
             )(
@@ -78,11 +80,9 @@ describe('Pipeline', () => {
             expect(ctx).to.eql(_.range(6));
         });
 
-        it('Should return early when not call next()', async () => {
-            let arr, ctx, rets;
-
-            arr = [], ctx = [];
-            rets = await Pipeline(
+        it('Should return early when not call next() (1)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
                 MidWare(arr, [2, 3], [6, 7], 0, 2),
                 RetWare(arr, [4, 5], 1),
                 MidWare(arr, [-1, -1], [-1, -1], -1, -1),
@@ -94,9 +94,11 @@ describe('Pipeline', () => {
             for (const r of rets) await asyncArrayPush(arr, r);
             expect(arr).to.eql(_.range(8));
             expect(ctx).to.eql(_.range(3));
+        });
 
-            arr = [], ctx = [];
-            rets = await Pipeline(
+        it('Should return early when not call next() (2)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
                 MidWare(arr, [2, 3], [6, 7], 0, 2),
                 RetWare(arr, [4, 5], 1),
             )(
@@ -109,11 +111,9 @@ describe('Pipeline', () => {
             expect(ctx).to.eql(_.range(3));
         });
 
-        it('Should work with pipeline.use()', async () => {
-            let arr, ctx, rets;
-
-            arr = [], ctx = [];
-            rets = await Pipeline()
+        it('Should work with pipeline.use() (1)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline()
                 .use(MidWare(arr, [2, 3], [12, 13], 0, 5))
                 .use(MidWare(arr, [4, 5], [10, 11], 1, 4))
                 .use(EndWare(arr, [6, 7], [8, 9], 2, 3))
@@ -125,9 +125,11 @@ describe('Pipeline', () => {
             for (const r of rets) await asyncArrayPush(arr, r);
             expect(arr).to.eql(_.range(14));
             expect(ctx).to.eql(_.range(6));
+        });
 
-            arr = [], ctx = [];
-            rets = await Pipeline()
+        it('Should work with pipeline.use() (2)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline()
                 .use(MidWare(arr, [2, 3], [12, 13], 0, 5))
                 .use(MidWare(arr, [4, 5], [10, 11], 1, 4))
                 (
@@ -302,23 +304,25 @@ describe('Pipeline', () => {
 
     describe('Nested useage', () => {
 
-        it('Should work with empty middleware', async () => {
-            let arr, ctx, rets;
-
+        it('Should work with empty middleware (1)', async () => {
             await Pipeline(
                 Pipeline(),
                 Pipeline(),
             )();
+        });
 
+        it('Should work with empty middleware (2)', async () => {
             await Pipeline(
                 Pipeline(),
                 Pipeline(),
             )(
                 Pipeline(),
             );
+        });
 
-            arr = [], ctx = [];
-            rets = await Pipeline(
+        it('Should work with empty middleware (3)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
                 Pipeline(),
                 Pipeline(),
             )(
@@ -328,9 +332,11 @@ describe('Pipeline', () => {
             for (const r of rets) await asyncArrayPush(arr, r);
             expect(arr).to.eql(_.range(4));
             expect(ctx).to.eql(_.range(2));
+        });
 
-            arr = [], ctx = [];
-            rets = await Pipeline(
+        it('Should work with empty middleware (4)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
                 Pipeline(),
                 Pipeline(),
             )(
@@ -344,10 +350,8 @@ describe('Pipeline', () => {
         });
 
         it('Should call middlewares sequentially', async () => {
-            let arr, ctx, rets;
-
-            arr = [], ctx = [];
-            rets = await Pipeline(
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
                 MidWare(arr, [2, 3], [36, 37], 0, 17),
                 Pipeline(
                     MidWare(arr, [4, 5], [34, 35], 1, 16),
@@ -372,11 +376,9 @@ describe('Pipeline', () => {
             expect(ctx).to.eql(_.range(18));
         });
 
-        it('Should return early when not call next()', async () => {
-            let arr, ctx, rets;
-
-            arr = [], ctx = [];
-            rets = await Pipeline(
+        it('Should return early when not call next() (1)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
                 MidWare(arr, [2, 3], [14, 15], 0, 6),
                 Pipeline(
                     MidWare(arr, [4, 5], [12, 13], 1, 5),
@@ -396,9 +398,11 @@ describe('Pipeline', () => {
             for (const r of rets) await asyncArrayPush(arr, r);
             expect(arr).to.eql(_.range(16));
             expect(ctx).to.eql(_.range(7));
+        });
 
-            arr = [], ctx = [];
-            rets = await Pipeline(
+        it('Should return early when not call next() (2)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
                 MidWare(arr, [2, 3], [30, 31], 0, 14),
                 Pipeline(
                     MidWare(arr, [4, 5], [28, 29], 1, 13),
@@ -424,9 +428,8 @@ describe('Pipeline', () => {
         });
 
         it('Should work with pipeline.use()', async () => {
-            let arr = [], ctx = [], rets;
-
-            rets = await Pipeline()
+            const arr = [], ctx = [];
+            const rets = await Pipeline()
                 .use(MidWare(arr, [2, 3], [36, 37], 0, 17))
                 .use(
                     Pipeline()
