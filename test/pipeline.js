@@ -20,7 +20,7 @@ const {
 
 describe('Pipeline', () => {
 
-    describe('Basic useage', () => {
+    describe('Basic usage', () => {
 
         it('Should work with empty middleware (1)', async () => {
             await Pipeline()();
@@ -302,7 +302,7 @@ describe('Pipeline', () => {
         });
     });
 
-    describe('Nested useage', () => {
+    describe('Nested usage', () => {
 
         it('Should work with empty middleware (1)', async () => {
             await Pipeline(
