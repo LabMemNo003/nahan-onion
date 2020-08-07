@@ -5,10 +5,6 @@ const delay = 10;
 const msgRight = 'Work correctly!';
 const msgWrong = 'Something wrong!';
 
-function range(end) {
-    return [...Array(end).keys()];
-}
-
 function randomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
@@ -117,10 +113,28 @@ function EndWareErrMultiNext(arr, a1, c1, c2) {
     };
 }
 
+function MidWareTrue(arr, a1, a2, c1, c2) {
+    return async (ctx, next, ...args) => {
+        for (const a of args) await asyncArrayPush(arr, a);
+        await asyncArrayPush(ctx, c1);
+        const rets = await next(...a1);
+        for (const r of rets) await asyncArrayPush(arr, r);
+        await asyncArrayPush(ctx, c2);
+        return a2;
+    };
+}
+
+function MidWareFalse(arr, c1) {
+    return async (ctx, next, ...args) => {
+        for (const a of args) await asyncArrayPush(arr, a);
+        await asyncArrayPush(ctx, c1);
+        return -1;
+    };
+}
+
 module.exports = {
     msgRight,
     msgWrong,
-    range,
     randomInt,
     asyncSleep,
     asyncArrayPush,
@@ -132,4 +146,6 @@ module.exports = {
     MidWareErrMultiNext,
     EndWareErrAfterNext,
     EndWareErrMultiNext,
+    MidWareTrue,
+    MidWareFalse,
 };

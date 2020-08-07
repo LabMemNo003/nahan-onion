@@ -2,13 +2,11 @@
 
 const { Pipeline } = require('..');
 const expect = require('chai').expect;
+const _ = require('lodash');
 
 const {
     msgRight,
     msgWrong,
-    range,
-    randomInt,
-    asyncSleep,
     asyncArrayPush,
     MidWare,
     EndWare,
@@ -35,8 +33,8 @@ describe('Pipeline', () => {
                 EndWare(arr, [0, 1], [2, 3], 0, 1),
             );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(4));
-            expect(ctx).to.eql(range(2));
+            expect(arr).to.eql(_.range(4));
+            expect(ctx).to.eql(_.range(2));
 
             arr = [], ctx = [];
             rets = await Pipeline()(
@@ -45,8 +43,8 @@ describe('Pipeline', () => {
                 0, 1
             );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(6));
-            expect(ctx).to.eql(range(2));
+            expect(arr).to.eql(_.range(6));
+            expect(ctx).to.eql(_.range(2));
         });
 
         it('Should call middlewares sequentially', async () => {
@@ -63,8 +61,8 @@ describe('Pipeline', () => {
                 0, 1
             );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(14));
-            expect(ctx).to.eql(range(6));
+            expect(arr).to.eql(_.range(14));
+            expect(ctx).to.eql(_.range(6));
 
             arr = [], ctx = [];
             rets = await Pipeline(
@@ -76,8 +74,8 @@ describe('Pipeline', () => {
                 0, 1
             );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(14));
-            expect(ctx).to.eql(range(6));
+            expect(arr).to.eql(_.range(14));
+            expect(ctx).to.eql(_.range(6));
         });
 
         it('Should return early when not call next()', async () => {
@@ -94,8 +92,8 @@ describe('Pipeline', () => {
                 0, 1
             );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(8));
-            expect(ctx).to.eql(range(3));
+            expect(arr).to.eql(_.range(8));
+            expect(ctx).to.eql(_.range(3));
 
             arr = [], ctx = [];
             rets = await Pipeline(
@@ -107,8 +105,8 @@ describe('Pipeline', () => {
                 0, 1
             );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(8));
-            expect(ctx).to.eql(range(3));
+            expect(arr).to.eql(_.range(8));
+            expect(ctx).to.eql(_.range(3));
         });
 
         it('Should work with pipeline.use()', async () => {
@@ -125,8 +123,8 @@ describe('Pipeline', () => {
                     0, 1
                 );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(14));
-            expect(ctx).to.eql(range(6));
+            expect(arr).to.eql(_.range(14));
+            expect(ctx).to.eql(_.range(6));
 
             arr = [], ctx = [];
             rets = await Pipeline()
@@ -138,8 +136,8 @@ describe('Pipeline', () => {
                     0, 1
                 );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(14));
-            expect(ctx).to.eql(range(6));
+            expect(arr).to.eql(_.range(14));
+            expect(ctx).to.eql(_.range(6));
         });
 
         describe('Error capture', () => {
@@ -161,8 +159,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal(msgRight);
-                            expect(arr).to.eql(range(6));
-                            expect(ctx).to.eql(range(3));
+                            expect(arr).to.eql(_.range(6));
+                            expect(ctx).to.eql(_.range(3));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -186,8 +184,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal(msgRight);
-                            expect(arr).to.eql(range(6));
-                            expect(ctx).to.eql(range(3));
+                            expect(arr).to.eql(_.range(6));
+                            expect(ctx).to.eql(_.range(3));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -213,8 +211,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal(msgRight);
-                            expect(arr).to.eql(range(16));
-                            expect(ctx).to.eql(range(8));
+                            expect(arr).to.eql(_.range(16));
+                            expect(ctx).to.eql(_.range(8));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -238,8 +236,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal(msgRight);
-                            expect(arr).to.eql(range(8));
-                            expect(ctx).to.eql(range(4));
+                            expect(arr).to.eql(_.range(8));
+                            expect(ctx).to.eql(_.range(4));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -265,8 +263,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal('next() is called multiple times!');
-                            expect(arr).to.eql(range(16));
-                            expect(ctx).to.eql(range(8));
+                            expect(arr).to.eql(_.range(16));
+                            expect(ctx).to.eql(_.range(8));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -290,8 +288,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal('next() is called multiple times!');
-                            expect(arr).to.eql(range(8));
-                            expect(ctx).to.eql(range(4));
+                            expect(arr).to.eql(_.range(8));
+                            expect(ctx).to.eql(_.range(4));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -328,8 +326,8 @@ describe('Pipeline', () => {
                 EndWare(arr, [0, 1], [2, 3], 0, 1),
             );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(4));
-            expect(ctx).to.eql(range(2));
+            expect(arr).to.eql(_.range(4));
+            expect(ctx).to.eql(_.range(2));
 
             arr = [], ctx = [];
             rets = await Pipeline(
@@ -341,8 +339,8 @@ describe('Pipeline', () => {
                 0, 1
             );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(6));
-            expect(ctx).to.eql(range(2));
+            expect(arr).to.eql(_.range(6));
+            expect(ctx).to.eql(_.range(2));
         });
 
         it('Should call middlewares sequentially', async () => {
@@ -370,8 +368,8 @@ describe('Pipeline', () => {
                 0, 1
             );
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(38));
-            expect(ctx).to.eql(range(18));
+            expect(arr).to.eql(_.range(38));
+            expect(ctx).to.eql(_.range(18));
         });
 
         it('Should return early when not call next()', async () => {
@@ -396,8 +394,8 @@ describe('Pipeline', () => {
                 0, 1
             )
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(16));
-            expect(ctx).to.eql(range(7));
+            expect(arr).to.eql(_.range(16));
+            expect(ctx).to.eql(_.range(7));
 
             arr = [], ctx = [];
             rets = await Pipeline(
@@ -421,8 +419,8 @@ describe('Pipeline', () => {
                 0, 1
             )
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(32));
-            expect(ctx).to.eql(range(15));
+            expect(arr).to.eql(_.range(32));
+            expect(ctx).to.eql(_.range(15));
         });
 
         it('Should work with pipeline.use()', async () => {
@@ -450,8 +448,8 @@ describe('Pipeline', () => {
                     0, 1
                 )
             for (const r of rets) await asyncArrayPush(arr, r);
-            expect(arr).to.eql(range(38));
-            expect(ctx).to.eql(range(18));
+            expect(arr).to.eql(_.range(38));
+            expect(ctx).to.eql(_.range(18));
         });
 
         describe('Error capture', () => {
@@ -479,8 +477,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal(msgRight);
-                            expect(arr).to.eql(range(6));
-                            expect(ctx).to.eql(range(3));
+                            expect(arr).to.eql(_.range(6));
+                            expect(ctx).to.eql(_.range(3));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -512,8 +510,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal(msgRight);
-                            expect(arr).to.eql(range(12));
-                            expect(ctx).to.eql(range(6));
+                            expect(arr).to.eql(_.range(12));
+                            expect(ctx).to.eql(_.range(6));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -545,8 +543,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal(msgRight);
-                            expect(arr).to.eql(range(24));
-                            expect(ctx).to.eql(range(12));
+                            expect(arr).to.eql(_.range(24));
+                            expect(ctx).to.eql(_.range(12));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -578,8 +576,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal(msgRight);
-                            expect(arr).to.eql(range(18));
-                            expect(ctx).to.eql(range(9));
+                            expect(arr).to.eql(_.range(18));
+                            expect(ctx).to.eql(_.range(9));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -611,8 +609,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal('next() is called multiple times!');
-                            expect(arr).to.eql(range(24));
-                            expect(ctx).to.eql(range(12));
+                            expect(arr).to.eql(_.range(24));
+                            expect(ctx).to.eql(_.range(12));
                             done();
                         } catch (e) {
                             console.log(e);
@@ -644,8 +642,8 @@ describe('Pipeline', () => {
                     .catch(err => {
                         try {
                             expect(err.message).to.equal('next() is called multiple times!');
-                            expect(arr).to.eql(range(18));
-                            expect(ctx).to.eql(range(9));
+                            expect(arr).to.eql(_.range(18));
+                            expect(ctx).to.eql(_.range(9));
                             done();
                         } catch (e) {
                             console.log(e);
