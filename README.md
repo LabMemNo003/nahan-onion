@@ -14,3 +14,4 @@ Middleware framework based on async/await and onion model
 
 + Pipeline(...middlewares)
 + Branch(condition, middleware)
++ Circuit(condition, middleware)
