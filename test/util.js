@@ -1,20 +1,18 @@
 'use strict';
 
+const _ = require('lodash');
+
 const delay = 10;
 
 const msgRight = 'Work correctly!';
 const msgWrong = 'Something wrong!';
-
-function randomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
-}
 
 async function asyncSleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function asyncArrayPush(arr, val, ms) {
-    return asyncSleep(ms || randomInt(delay)).then(() => arr.push(val));
+    return asyncSleep(ms || _.random(delay)).then(() => arr.push(val));
 }
 
 function MidWare(arr, a1, a2, c1, c2) {
@@ -113,16 +111,21 @@ function EndWareErrMultiNext(arr, a1, c1, c2) {
     };
 }
 
-function MidWareTrue(arr, a1, a2, c1, c2) {
+const MidWareTrue = MidWare;
+
+function MidWareTrueFalse(arr, a1, a2, a3, c1, c2) {
     return async (ctx, next, ...args) => {
         for (const a of args) await asyncArrayPush(arr, a);
         await asyncArrayPush(ctx, c1);
         const rets = await next(...a1);
-        for (const r of rets) await asyncArrayPush(arr, r);
+        if (rets !== undefined) arr.push(-1);
+        for (const a of a2) await asyncArrayPush(arr, a);
         await asyncArrayPush(ctx, c2);
-        return a2;
+        return a3;
     };
 }
+
+const EndWareTrue = EndWare;
 
 function MidWareFalse(arr, c1) {
     return async (ctx, next, ...args) => {
@@ -135,7 +138,6 @@ function MidWareFalse(arr, c1) {
 module.exports = {
     msgRight,
     msgWrong,
-    randomInt,
     asyncSleep,
     asyncArrayPush,
     MidWare,
@@ -147,5 +149,7 @@ module.exports = {
     EndWareErrAfterNext,
     EndWareErrMultiNext,
     MidWareTrue,
+    MidWareTrueFalse,
+    EndWareTrue,
     MidWareFalse,
 };
