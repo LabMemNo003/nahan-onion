@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 
-const delay = 10;
+const delay = 1;
 
 const msgRight = 'Work correctly!';
 const msgWrong = 'Something wrong!';
@@ -23,6 +23,18 @@ function MidWare(arr, a1, a2, c1, c2) {
         for (const r of rets) await asyncArrayPush(arr, r);
         await asyncArrayPush(ctx, c2);
         return a2;
+    };
+}
+
+function MidWareSafe(arr, a1, a2, a3, c1, c2) {
+    return async (ctx, next, ...args) => {
+        for (const a of args) await asyncArrayPush(arr, a);
+        await asyncArrayPush(ctx, c1);
+        const rets = await next(...a1);
+        if (rets !== undefined) arr.push(-1);
+        for (const a of a2) await asyncArrayPush(arr, a);
+        await asyncArrayPush(ctx, c2);
+        return a3;
     };
 }
 
@@ -113,17 +125,7 @@ function EndWareErrMultiNext(arr, a1, c1, c2) {
 
 const MidWareTrue = MidWare;
 
-function MidWareTrueFalse(arr, a1, a2, a3, c1, c2) {
-    return async (ctx, next, ...args) => {
-        for (const a of args) await asyncArrayPush(arr, a);
-        await asyncArrayPush(ctx, c1);
-        const rets = await next(...a1);
-        if (rets !== undefined) arr.push(-1);
-        for (const a of a2) await asyncArrayPush(arr, a);
-        await asyncArrayPush(ctx, c2);
-        return a3;
-    };
-}
+const MidWareTrueFalse = MidWareSafe;
 
 const EndWareTrue = EndWare;
 
@@ -135,12 +137,29 @@ function MidWareFalse(arr, c1) {
     };
 }
 
+function MidSync(arr, a1, c1) {
+    return (ctx, next, ...args) => {
+        for (const a of args) arr.push(a);
+        ctx.push(c1);
+        return next(...a1);
+    };
+}
+
+function EndSync(arr, c1) {
+    return (ctx, next, ...args) => {
+        for (const a of args) arr.push(a);
+        ctx.push(c1);
+        return next(-1);
+    };
+}
+
 module.exports = {
     msgRight,
     msgWrong,
     asyncSleep,
     asyncArrayPush,
     MidWare,
+    MidWareSafe,
     EndWare,
     RetWare,
     MidWareErrBeforeNext,
@@ -152,4 +171,6 @@ module.exports = {
     MidWareTrueFalse,
     EndWareTrue,
     MidWareFalse,
+    MidSync,
+    EndSync,
 };

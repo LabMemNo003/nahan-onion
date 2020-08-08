@@ -9,6 +9,7 @@ const {
     msgWrong,
     asyncArrayPush,
     MidWare,
+    MidWareSafe,
     EndWare,
     RetWare,
     MidWareErrBeforeNext,
@@ -16,6 +17,8 @@ const {
     MidWareErrMultiNext,
     EndWareErrAfterNext,
     EndWareErrMultiNext,
+    MidSync,
+    EndSync,
 } = require('./util');
 
 describe('Pipeline', () => {
@@ -654,6 +657,66 @@ describe('Pipeline', () => {
                         }
                     });
             });
+        });
+    });
+
+    describe('Usage with sync function', () => {
+        it('Should work (1)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
+                MidWare(arr, [2, 3], [30, 31], 0, 14),
+                MidSync(arr, [4, 5], 1),
+                Pipeline(
+                    MidWare(arr, [6, 7], [28, 29], 2, 13),
+                    MidSync(arr, [8, 9], 3),
+                    MidWare(arr, [10, 11], [26, 27], 4, 12),
+                ),
+                Pipeline(
+                    MidSync(arr, [12, 13], 5),
+                    MidWare(arr, [14, 15], [24, 25], 6, 11),
+                    MidSync(arr, [16, 17], 7),
+                ),
+                MidWareSafe(arr, [18, 19], [20, 21], [22, 23], 8, 10),
+                EndSync(arr, 9),
+            )(
+                ctx,
+                undefined,
+                0, 1
+            );
+            for (const r of rets) await asyncArrayPush(arr, r);
+            expect(arr).to.eql(_.range(32));
+            expect(ctx).to.eql(_.range(15));
+        });
+
+        it('Should work (2)', async () => {
+            const arr = [], ctx = [];
+            const rets = await Pipeline(
+                MidSync(arr, [2, 3], 0),
+                MidWare(arr, [4, 5], [36, 37], 1, 17),
+                MidSync(arr, [6, 7], 2),
+            )(
+                ctx,
+                Pipeline(
+                    MidSync(arr, [8, 9], 3),
+                    Pipeline(
+                        MidWare(arr, [10, 11], [34, 35], 4, 16),
+                        MidSync(arr, [12, 13], 5),
+                        MidWare(arr, [14, 15], [32, 33], 6, 15),
+                    ),
+                    MidSync(arr, [16, 17], 7),
+                    Pipeline(
+                        MidSync(arr, [18, 19], 8),
+                        MidWare(arr, [20, 21], [30, 31], 9, 14),
+                        MidSync(arr, [22, 23], 10),
+                    ),
+                    MidSync(arr, [24, 25], 11),
+                    EndWare(arr, [26, 27], [28, 29], 12, 13),
+                ),
+                0, 1
+            );
+            for (const r of rets) await asyncArrayPush(arr, r);
+            expect(arr).to.eql(_.range(38));
+            expect(ctx).to.eql(_.range(18));
         });
     });
 });
