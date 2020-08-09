@@ -719,4 +719,69 @@ describe('Pipeline', () => {
             expect(ctx).to.eql(_.range(18));
         });
     });
+
+    describe('Change context in middleware', () => {
+
+        it('test (1)', async () => {
+            const ctx = { data: 1, nh: 'flag' };
+            await Pipeline(
+                async (ctx, next) => {
+                    expect(ctx).to.eql({ data: 1, nh: 'flag' });
+                    ctx._newCtx = { data: 2 };
+                    await next();
+                    expect(ctx).to.eql({ data: 1, nh: 'flag' });
+                },
+                async (ctx, next) => {
+                    expect(ctx).to.eql({ data: 2, nh: 'flag' });
+                    await next();
+                    expect(ctx).to.eql({ data: 2 });
+                },
+                async (ctx, next) => {
+                    expect(ctx).to.eql({ data: 2, nh: 'flag' });
+                    ctx._newCtx = { data: 3 };
+                    delete ctx.nh;
+                    await next();
+                    expect(ctx).to.eql({ data: 2 });
+                },
+                async (ctx, next) => {
+                    expect(ctx).to.eql({ data: 3 });
+                    await next();
+                    expect(ctx).to.eql({ data: 3 });
+                },
+            )(
+                ctx,
+                (ctx) => expect(ctx).to.eql({ data: 3 }),
+            );
+        });
+
+        it('test (2)', async () => {
+            const ctx = { data: 1, nh: 'flag' };
+            await Pipeline(
+                (ctx, next) => {
+                    expect(ctx).to.eql({ data: 1, nh: 'flag' });
+                    ctx._newCtx = { data: 2 };
+                    return next();
+                },
+                async (ctx, next) => {
+                    expect(ctx).to.eql({ data: 2, nh: 'flag' });
+                    await next();
+                    expect(ctx).to.eql({ data: 2 });
+                },
+                (ctx, next) => {
+                    expect(ctx).to.eql({ data: 2, nh: 'flag' });
+                    ctx._newCtx = { data: 3 };
+                    delete ctx.nh;
+                    return next();
+                },
+                async (ctx, next) => {
+                    expect(ctx).to.eql({ data: 3 });
+                    await next();
+                    expect(ctx).to.eql({ data: 3 });
+                },
+            )(
+                ctx,
+                (ctx) => expect(ctx).to.eql({ data: 3 }),
+            );
+        });
+    });
 });
