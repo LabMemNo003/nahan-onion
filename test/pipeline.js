@@ -727,30 +727,30 @@ describe('Pipeline', () => {
             await Pipeline(
                 async (ctx, next) => {
                     expect(ctx).to.eql({ data: 1, nh: 'flag' });
-                    ctx._newCtx = { data: 2 };
+                    ctx._nh_new = { data: 2, _nh: 'opt' };
                     await next();
                     expect(ctx).to.eql({ data: 1, nh: 'flag' });
                 },
                 async (ctx, next) => {
-                    expect(ctx).to.eql({ data: 2, nh: 'flag' });
+                    expect(ctx).to.eql({ data: 2, nh: 'flag', _nh: 'opt' });
                     await next();
-                    expect(ctx).to.eql({ data: 2 });
+                    expect(ctx).to.eql({ data: 2, _nh: 'opt' });
                 },
                 async (ctx, next) => {
-                    expect(ctx).to.eql({ data: 2, nh: 'flag' });
-                    ctx._newCtx = { data: 3 };
+                    expect(ctx).to.eql({ data: 2, nh: 'flag', _nh: 'opt' });
+                    ctx._nh_new = { data: 3 };
                     delete ctx.nh;
                     await next();
-                    expect(ctx).to.eql({ data: 2 });
+                    expect(ctx).to.eql({ data: 2, _nh: 'opt' });
                 },
                 async (ctx, next) => {
-                    expect(ctx).to.eql({ data: 3 });
+                    expect(ctx).to.eql({ data: 3, _nh: 'opt' });
                     await next();
-                    expect(ctx).to.eql({ data: 3 });
+                    expect(ctx).to.eql({ data: 3, _nh: 'opt' });
                 },
             )(
                 ctx,
-                (ctx) => expect(ctx).to.eql({ data: 3 }),
+                (ctx) => expect(ctx).to.eql({ data: 3, _nh: 'opt' }),
             );
         });
 
@@ -759,28 +759,28 @@ describe('Pipeline', () => {
             await Pipeline(
                 (ctx, next) => {
                     expect(ctx).to.eql({ data: 1, nh: 'flag' });
-                    ctx._newCtx = { data: 2 };
+                    ctx._nh_new = { data: 2, _nh: 'opt' };
                     return next();
                 },
                 async (ctx, next) => {
-                    expect(ctx).to.eql({ data: 2, nh: 'flag' });
+                    expect(ctx).to.eql({ data: 2, nh: 'flag', _nh: 'opt' });
                     await next();
-                    expect(ctx).to.eql({ data: 2 });
+                    expect(ctx).to.eql({ data: 2, _nh: 'opt' });
                 },
                 (ctx, next) => {
-                    expect(ctx).to.eql({ data: 2, nh: 'flag' });
-                    ctx._newCtx = { data: 3 };
+                    expect(ctx).to.eql({ data: 2, nh: 'flag', _nh: 'opt' });
+                    ctx._nh_new = { data: 3 };
                     delete ctx.nh;
                     return next();
                 },
                 async (ctx, next) => {
-                    expect(ctx).to.eql({ data: 3 });
+                    expect(ctx).to.eql({ data: 3, _nh: 'opt' });
                     await next();
-                    expect(ctx).to.eql({ data: 3 });
+                    expect(ctx).to.eql({ data: 3, _nh: 'opt' });
                 },
             )(
                 ctx,
-                (ctx) => expect(ctx).to.eql({ data: 3 }),
+                (ctx) => expect(ctx).to.eql({ data: 3, _nh: 'opt' }),
             );
         });
     });
