@@ -783,5 +783,49 @@ describe('Pipeline', () => {
                 (ctx) => expect(ctx).to.eql({ data: 3, _nh: 'opt' }),
             );
         });
+
+        it('test (3)', async () => {
+            const ctx = { data: 1, nh: { flag: -1 } };
+            await Pipeline(
+                async (ctx, next) => {
+                    expect(ctx).to.eql({ data: 1, nh: { flag: -1 } });
+                    ctx._nh_new = { data: 2, _nh: 'opt' };
+                    await next();
+                    expect(ctx.data).to.equal(1);
+                    expect(ctx.nh.flag).to.equal(-1);
+                },
+                async (ctx, next) => {
+                    expect(ctx).to.eql({ data: 2, nh: { flag: -1 }, _nh: 'opt' });
+                    await next();
+                    expect(ctx.data).to.equal(2);
+                    expect(ctx._nh).to.equal('opt');
+                    expect(ctx.nh.flag).to.equal(-1);
+                },
+                async (ctx, next) => {
+                    expect(ctx).to.eql({ data: 2, nh: { flag: -1 }, _nh: 'opt' });
+                    ctx._nh_new = ctx.nh;
+                    await next();
+                    expect(ctx.data).to.equal(2);
+                    expect(ctx._nh).to.equal('opt');
+                    expect(ctx.nh.flag).to.equal(-1);
+                },
+                async (ctx, next) => {
+                    expect(ctx.flag).to.equal(-1);
+                    expect(ctx._nh).to.equal('opt');
+                    expect(ctx.nh).to.equal(ctx);
+                    await next();
+                    expect(ctx.flag).to.equal(-1);
+                    expect(ctx._nh).to.equal('opt');
+                    expect(ctx.nh).to.equal(ctx);
+                },
+            )(
+                ctx,
+                (ctx) => {
+                    expect(ctx.flag).to.equal(-1);
+                    expect(ctx._nh).to.equal('opt');
+                    expect(ctx.nh).to.equal(ctx);
+                },
+            );
+        });
     });
 });
